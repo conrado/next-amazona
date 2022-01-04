@@ -1,4 +1,10 @@
-# Next.js with TypeScript example
+# Next.js eCommerce course result
+
+Initial typescript + MaterialUI boilerplate taken from:
+https://github.com/mui-org/material-ui/tree/master/examples/nextjs-with-typescript
+
+The code in this repository is the result of following the following course:
+https://www.youtube.com/watch?v=3kYkEVIZNZY
 
 ## How to use
 
