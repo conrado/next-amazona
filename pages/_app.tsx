@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import theme from '../src/theme';
 import createEmotionCache from '../src/createEmotionCache';
+import { useEffect } from 'react';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -16,6 +17,14 @@ interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  useEffect(() => {
+    const jssStyles = document.querySelector('#jss-server-side');
+    return () => {
+      if (jssStyles) {
+        jssStyles.parentElement?.removeChild(jssStyles);
+      }
+    };
+  }, []);
   return (
     <CacheProvider value={emotionCache}>
       <Head>
