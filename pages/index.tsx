@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
+import NextLink from 'next/link';
 import Layout from '../components/Layout';
 import {
   Button,
@@ -21,24 +22,26 @@ const Home: NextPage = () => {
         <Grid container spacing={3}>
           {data.products.map((product) => {
             return (
-              <Grid item md={4} key={product.name}>
+              <Grid item md={4} key={product.id}>
                 <Card>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      image={product.image}
-                      title={product.name}
-                    ></CardMedia>
-                    <CardContent>
-                      <Typography>{product.name}</Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Typography>${product.price}</Typography>
-                      <Button size="small" color="primary">
-                        Add to cart
-                      </Button>
-                    </CardActions>
-                  </CardActionArea>
+                  <NextLink href={`/products/${product.slug}`}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        image={product.image}
+                        title={product.name}
+                      ></CardMedia>
+                      <CardContent>
+                        <Typography>{product.name}</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </NextLink>
+                  <CardActions>
+                    <Typography>${product.price}</Typography>
+                    <Button size="small" color="primary">
+                      Add to cart
+                    </Button>
+                  </CardActions>
                 </Card>
               </Grid>
             );
