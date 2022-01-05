@@ -5,15 +5,18 @@ import { AppBar, Container, Link, Toolbar, Typography } from '@mui/material';
 import useStyles from '../utils/styles';
 
 interface Props {
+  title?: string;
+  description?: string;
   children: NonNullable<React.ReactNode>;
 }
 
-export default function Layout({ children }: Props) {
+export default function Layout({ title, description, children }: Props) {
   const classes = useStyles();
   return (
     <div>
       <Head>
-        <title>Next Amazona</title>
+        <title>{title ? `${title} - Next Amazona` : 'Next Amazona'}</title>
+        {description && <meta name="description" content={description}></meta>}
       </Head>
       <AppBar position="static" className={classes.navBar}>
         <Toolbar>
