@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   return (
     <Layout>
       <div>
-        <h1>Products</h1>
+        <Typography variant="h1">Products</Typography>
         <Grid container spacing={3}>
           {data.products.map((product) => {
             return (

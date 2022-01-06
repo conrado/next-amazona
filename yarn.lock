@@ -394,7 +394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/material@npm:latest":
+"@mui/material@npm:^5.2.7":
   version: 5.2.7
   resolution: "@mui/material@npm:5.2.7"
   dependencies:
@@ -3749,7 +3749,7 @@ __metadata:
     "@emotion/server": latest
     "@emotion/styled": latest
     "@mui/icons-material": latest
-    "@mui/material": latest
+    "@mui/material": ^5.2.7
     "@mui/styles": ^5.2.3
     "@types/react": latest
     eslint: latest

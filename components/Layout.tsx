@@ -1,7 +1,14 @@
 import React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
-import { AppBar, Container, Link, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Container,
+  createTheme,
+  Link,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import useStyles from '../utils/styles';
 
 interface Props {
@@ -12,6 +19,7 @@ interface Props {
 
 export default function Layout({ title, description, children }: Props) {
   const classes = useStyles();
+
   return (
     <div>
       <Head>
