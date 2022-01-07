@@ -6,10 +6,14 @@ import {
   Container,
   createTheme,
   Link,
+  PaletteMode,
+  Switch,
   Toolbar,
   Typography,
 } from '@mui/material';
 import useStyles from '../utils/styles';
+
+import { useDarkMode } from '../utils/DarkMode';
 
 interface Props {
   title?: string;
@@ -19,6 +23,10 @@ interface Props {
 
 export default function Layout({ title, description, children }: Props) {
   const classes = useStyles();
+  const [mode, setMode] = useDarkMode();
+  const onDarkModeChange = () => {
+    setMode(mode === 'light' ? 'dark' : 'light');
+  };
 
   return (
     <div>
@@ -35,6 +43,10 @@ export default function Layout({ title, description, children }: Props) {
           </NextLink>
           <div className={classes.grow}></div>
           <div>
+            <Switch
+              checked={mode === 'dark' ? true : false}
+              onChange={onDarkModeChange}
+            ></Switch>
             <NextLink href="/cart" passHref>
               <Link>Cart</Link>
             </NextLink>

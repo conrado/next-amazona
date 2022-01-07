@@ -19,7 +19,9 @@
     "@mui/styles": "^5.2.3",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "recoil": "^0.5.2",
+    "recoil-persist": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "latest",
