@@ -17,6 +17,7 @@
     "@mui/icons-material": "latest",
     "@mui/material": "^5.2.7",
     "@mui/styles": "^5.2.3",
+    "mongoose": "^6.1.5",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
