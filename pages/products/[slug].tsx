@@ -1,6 +1,4 @@
 import React from 'react';
-import { useRouter } from 'next/router';
-import data from '../../utils/data';
 import Layout from '../../components/Layout';
 import NextLink from 'next/link';
 import Image from 'next/image';
@@ -8,19 +6,22 @@ import {
   Button,
   Card,
   Grid,
-  ImageListItem,
   Link,
   List,
   ListItem,
   Typography,
 } from '@mui/material';
 import useStyles from '../../utils/styles';
+import db from '../../utils/db';
+import Product, { IProduct } from '../../models/Product';
+import { GetServerSideProps, NextPageContext } from 'next';
 
-export default function ProductDetailPage() {
+interface Props {
+  product: IProduct;
+}
+
+export default function ProductDetailPage({ product }: Props) {
   const classes = useStyles();
-  const router = useRouter();
-  const { slug } = router.query;
-  const product = data.products.find((a) => a.slug === slug);
   if (!product) {
     return <div>Product not found</div>;
   }
@@ -101,3 +102,25 @@ export default function ProductDetailPage() {
     </Layout>
   );
 }
+
+// comments for this function have two solutions for
+//   getServerSideProps, see 1- and 2- below
+// For history see the following GitHub issue
+//   https://github.com/vercel/next.js/issues/11993
+// if serialization of more complex data is needed see the following:
+//   https://github.com/blitz-js/superjson#using-with-nextjs
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const slug = context.params?.slug;
+  await db.connect();
+  const product = await Product.findOne({ slug }).lean();
+  // 1 - either use .lean() to strip some fields
+  // const products = await Product.findOne({slug});
+  await db.disconnect();
+  return {
+    props: {
+      product: db.convertDocToObj(product),
+      // 2 - or use the JSON.parse(JSON.stringify(data))
+      // product: JSON.parse(JSON.stringify(product)),
+    },
+  };
+};

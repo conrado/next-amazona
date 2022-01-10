@@ -8,8 +8,9 @@ const handler = nc<NextApiRequest, NextApiResponse>();
 
 handler.get(async (req, res) => {
   await db.connect();
-  Product.deleteMany();
-  Product.insertMany(data.products);
+  // await db.mongoose.deleteModel('Product');
+  await Product.deleteMany();
+  await Product.insertMany(data.products);
   await db.disconnect();
   res.send({ message: 'seeded successfully' });
 });

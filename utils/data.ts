@@ -1,7 +1,6 @@
 const data = {
   products: [
     {
-      id: 1,
       slug: 'free-shirt',
       name: 'Free Shirt',
       category: 'Shirts',
@@ -14,7 +13,6 @@ const data = {
       description: 'A popular shirt',
     },
     {
-      id: 2,
       slug: 'fit-shirt',
       name: 'Fit Shirt',
       category: 'Shirts',
@@ -27,7 +25,6 @@ const data = {
       description: 'A popular shirt',
     },
     {
-      id: 3,
       slug: 'slim-shirt',
       name: 'Slim Shirt',
       category: 'Shirts',
@@ -40,7 +37,6 @@ const data = {
       description: 'A popular shirt',
     },
     {
-      id: 4,
       slug: 'golf-pants',
       name: 'Golf Pants',
       category: 'Pants',
@@ -53,7 +49,6 @@ const data = {
       description: 'Smart looking pants',
     },
     {
-      id: 5,
       slug: 'fit-pants',
       name: 'Fit Pants',
       category: 'Pants',
@@ -66,7 +61,6 @@ const data = {
       description: 'Smart looking pants',
     },
     {
-      id: 6,
       slug: 'classic-pants',
       name: 'Classic Pants',
       category: 'Pants',

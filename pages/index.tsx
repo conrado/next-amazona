@@ -12,15 +12,20 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import data from '../utils/data';
+import db from '../utils/db';
+import Product, { IProduct } from '../models/Product';
 
-const Home: NextPage = () => {
+interface Props {
+  products: IProduct[];
+}
+
+const Home: NextPage<Props> = ({ products }) => {
   return (
     <Layout>
       <div>
         <Typography variant="h1">Products</Typography>
         <Grid container spacing={3}>
-          {data.products.map((product) => {
+          {products.map((product) => {
             return (
               <Grid item md={4} key={product.id}>
                 <Card>
@@ -53,3 +58,24 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+// comments for this function have two solutions for
+//   getServerSideProps, see 1- and 2- below
+// For history see the following GitHub issue
+//   https://github.com/vercel/next.js/issues/11993
+// if serialization of more complex data is needed see the following:
+//   https://github.com/blitz-js/superjson#using-with-nextjs
+export async function getServerSideProps() {
+  await db.connect();
+  const products = await Product.find({}).lean();
+  // 1 - either use .lean() to strip some fields
+  // const products = await Product.find({});
+  await db.disconnect();
+  return {
+    props: {
+      products: products.map(db.convertDocToObj),
+      // 2 - or use the JSON.parse(JSON.stringify(data))
+      // products: JSON.parse(JSON.stringify(products)),
+    },
+  };
+}
