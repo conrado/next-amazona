@@ -1,13 +1,14 @@
-import { createTheme, PaletteMode } from '@mui/material';
-import { ThemeProvider } from '@mui/styles';
+import {
+  createTheme,
+  CssBaseline,
+  PaletteMode,
+  ThemeOptions,
+  ThemeProvider,
+} from '@mui/material';
 import { red } from '@mui/material/colors';
 import React from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-
-interface Props {
-  children: NonNullable<React.ReactNode>;
-}
 
 const { persistAtom } = recoilPersist();
 
@@ -32,9 +33,8 @@ export const useDarkMode = () => {
   ] as const;
 };
 
-export default function DarkMode({ children }: Props) {
-  const [mode, setMode] = useDarkMode();
-  const theme = createTheme({
+const wrapCreateTheme = (mode: PaletteMode) => {
+  return createTheme({
     typography: {
       h1: {
         fontSize: '1.6rem',
@@ -60,5 +60,22 @@ export default function DarkMode({ children }: Props) {
       },
     },
   });
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+};
+
+export const theme = wrapCreateTheme('light');
+
+interface Props {
+  children: NonNullable<React.ReactNode>;
+}
+
+export function DarkMode({ children }: Props) {
+  const [mode] = useDarkMode();
+  const darkModeTheme = wrapCreateTheme(mode);
+
+  return (
+    <ThemeProvider theme={darkModeTheme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
 }

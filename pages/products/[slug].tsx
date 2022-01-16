@@ -1,4 +1,3 @@
-import React from 'react';
 import Layout from '../../components/Layout';
 import NextLink from 'next/link';
 import Image from 'next/image';
@@ -14,17 +13,28 @@ import {
 import useStyles from '../../utils/styles';
 import db from '../../utils/db';
 import Product, { IProduct } from '../../models/Product';
-import { GetServerSideProps, NextPageContext } from 'next';
+import { GetServerSideProps } from 'next';
+import axios from 'axios';
+import { useShoppingCart } from '../../models/ShoppingCart';
 
 interface Props {
   product: IProduct;
 }
 
 export default function ProductDetailPage({ product }: Props) {
+  const [_, addToCart] = useShoppingCart();
   const classes = useStyles();
   if (!product) {
     return <div>Product not found</div>;
   }
+  const onAddToCart = async () => {
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if (data.countInStock <= 0) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    addToCart({ product, quantity: 1 });
+  };
   return (
     <Layout title={product.name} description={product.description}>
       <div className={classes.section}>
@@ -91,7 +101,12 @@ export default function ProductDetailPage({ product }: Props) {
                 </Grid>
               </ListItem>
               <ListItem>
-                <Button fullWidth variant="contained" color="primary">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={onAddToCart}
+                >
                   Add to Cart
                 </Button>
               </ListItem>

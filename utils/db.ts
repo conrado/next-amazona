@@ -9,12 +9,12 @@ const connection: Connection = {
 
 const connect = async () => {
   if (connection.isConnected) {
-    console.log('already connected!');
+    // console.log('already connected! no need to reconnect');
   }
   if (mongoose.connections.length > 0) {
     connection.isConnected = mongoose.connections[0].readyState;
     if (connection.isConnected === 1) {
-      console.log('use previous connection');
+      // console.log('use a previous established connection');
       return;
     }
     await mongoose.disconnect();
@@ -26,7 +26,7 @@ const connect = async () => {
       useUnifiedTopology: true,
     } as MongooseOptions
   );
-  console.log('new connection');
+  // console.log('using a new connection');
   connection.isConnected = db.connections[0].readyState;
 };
 
@@ -36,7 +36,7 @@ const disconnect = async () => {
       await mongoose.disconnect();
       connection.isConnected = 0;
     } else {
-      console.log('not disconnected');
+      // console.log('we are in dev mode. not disconnecting');
     }
   }
 };

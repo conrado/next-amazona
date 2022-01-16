@@ -23,11 +23,13 @@ const Home: NextPage<Props> = ({ products }) => {
   return (
     <Layout>
       <div>
-        <Typography variant="h1">Products</Typography>
+        <Typography variant="h1" id="PageTitle">
+          Products
+        </Typography>
         <Grid container spacing={3}>
           {products.map((product) => {
             return (
-              <Grid item md={4} key={product.id}>
+              <Grid item md={4} key={product._id}>
                 <Card>
                   <NextLink href={`/products/${product.slug}`}>
                     <CardActionArea>

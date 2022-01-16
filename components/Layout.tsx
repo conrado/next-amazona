@@ -1,29 +1,30 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import {
   AppBar,
   Container,
-  createTheme,
   Link,
-  PaletteMode,
   Switch,
   Toolbar,
   Typography,
+  Badge,
 } from '@mui/material';
 import useStyles from '../utils/styles';
 
-import { useDarkMode } from '../utils/DarkMode';
+import { useDarkMode } from '../components/DarkMode';
+import { useShoppingCart } from '../models/ShoppingCart';
 
 interface Props {
   title?: string;
   description?: string;
-  children: NonNullable<React.ReactNode>;
+  children: NonNullable<ReactNode>;
 }
 
 export default function Layout({ title, description, children }: Props) {
   const classes = useStyles();
   const [mode, setMode] = useDarkMode();
+  const [cart] = useShoppingCart();
   const onDarkModeChange = () => {
     setMode(mode === 'light' ? 'dark' : 'light');
   };
@@ -48,7 +49,15 @@ export default function Layout({ title, description, children }: Props) {
               onChange={onDarkModeChange}
             ></Switch>
             <NextLink href="/cart" passHref>
-              <Link>Cart</Link>
+              <Link>
+                {cart.cartItems.length > 0 ? (
+                  <Badge color="secondary" badgeContent={cart.cartItems.length}>
+                    Cart
+                  </Badge>
+                ) : (
+                  'Cart'
+                )}
+              </Link>
             </NextLink>
             <NextLink href="/login" passHref>
               <Link>Login</Link>
