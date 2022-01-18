@@ -3,11 +3,13 @@ import { atom, useRecoilState } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { IProduct } from './Product';
 
+export interface ICartItem {
+  product: IProduct;
+  quantity: number;
+}
+
 export interface IShoppingCart {
-  cartItems: {
-    product: IProduct;
-    quantity: number;
-  }[];
+  cartItems: ICartItem[];
 }
 
 const { persistAtom } = recoilPersist();
@@ -22,21 +24,21 @@ export const ShoppingCartState = atom({
 export const useShoppingCart = () => {
   const [isInitial, setIsInitial] = React.useState(true);
   // LS for local storage
-  const [LSShoppingCart, setLSShoppingCart] = useRecoilState(ShoppingCartState);
+  const [LSShoppingCart, setLSShoppingCart] =
+    useRecoilState<IShoppingCart>(ShoppingCartState);
 
-  interface Props {
-    product: IProduct;
-    quantity: number;
-  }
-  const addToCart = ({ product, quantity }: Props) => {
+  const addToCart = ({ product, quantity }: ICartItem) => {
     const existingItem = LSShoppingCart.cartItems.find(
-      (item: Props) => item.product._id === product._id
+      (item) => item.product._id === product._id
     );
     const cartItems = existingItem
-      ? LSShoppingCart.cartItems.map((item: Props) =>
-          item.product.name === existingItem.name
-            ? { product, quantity: item.quantity + quantity }
-            : { product, quantity }
+      ? LSShoppingCart.cartItems.map((item) =>
+          item.product._id === existingItem.product._id
+            ? {
+                product: existingItem.product,
+                quantity: existingItem.quantity + quantity,
+              }
+            : { product: item.product, quantity: item.quantity }
         )
       : [...LSShoppingCart.cartItems, { product, quantity }];
     setLSShoppingCart({ cartItems });

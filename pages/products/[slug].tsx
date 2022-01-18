@@ -16,12 +16,14 @@ import Product, { IProduct } from '../../models/Product';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { useShoppingCart } from '../../models/ShoppingCart';
+import { useRouter } from 'next/router';
 
 interface Props {
   product: IProduct;
 }
 
 export default function ProductDetailPage({ product }: Props) {
+  const router = useRouter();
   const [_, addToCart] = useShoppingCart();
   const classes = useStyles();
   if (!product) {
@@ -34,6 +36,7 @@ export default function ProductDetailPage({ product }: Props) {
       return;
     }
     addToCart({ product, quantity: 1 });
+    router.push('/cart');
   };
   return (
     <Layout title={product.name} description={product.description}>
