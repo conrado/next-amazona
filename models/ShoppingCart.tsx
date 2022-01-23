@@ -27,7 +27,19 @@ export const useShoppingCart = () => {
   const [LSShoppingCart, setLSShoppingCart] =
     useRecoilState<IShoppingCart>(ShoppingCartState);
 
-  const addToCart = ({ product, quantity }: ICartItem) => {
+  const getQuantity = (product: IProduct) => {
+    const existingItem = LSShoppingCart.cartItems.find(
+      (item) => item.product._id === product._id
+    );
+    return existingItem ? existingItem.quantity : 0;
+  };
+  const removeFromCart = ({ product }: ICartItem) => {
+    const cartItems = LSShoppingCart.cartItems.filter(
+      (item) => item.product._id !== product._id
+    );
+    setLSShoppingCart({ cartItems });
+  };
+  const updateCart = ({ product, quantity }: ICartItem) => {
     const existingItem = LSShoppingCart.cartItems.find(
       (item) => item.product._id === product._id
     );
@@ -36,7 +48,7 @@ export const useShoppingCart = () => {
           item.product._id === existingItem.product._id
             ? {
                 product: existingItem.product,
-                quantity: existingItem.quantity + quantity,
+                quantity: quantity,
               }
             : { product: item.product, quantity: item.quantity }
         )
@@ -50,6 +62,8 @@ export const useShoppingCart = () => {
 
   return [
     isInitial === true ? { cartItems: [] } : LSShoppingCart,
-    addToCart,
+    updateCart,
+    removeFromCart,
+    getQuantity,
   ] as const;
 };

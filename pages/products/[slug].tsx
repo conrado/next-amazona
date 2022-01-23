@@ -24,18 +24,19 @@ interface Props {
 
 export default function ProductDetailPage({ product }: Props) {
   const router = useRouter();
-  const [_, addToCart] = useShoppingCart();
+  const [, updateCart, , getQuantity] = useShoppingCart();
   const classes = useStyles();
   if (!product) {
     return <div>Product not found</div>;
   }
   const onAddToCart = async () => {
+    const quantity = getQuantity(product) + 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
-    if (data.countInStock <= 0) {
+    if (data.countInStock < quantity) {
       window.alert('Sorry. Product is out of stock');
       return;
     }
-    addToCart({ product, quantity: 1 });
+    updateCart({ product, quantity });
     router.push('/cart');
   };
   return (

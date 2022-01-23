@@ -14,12 +14,27 @@ import {
 } from '@mui/material';
 import db from '../utils/db';
 import Product, { IProduct } from '../models/Product';
+import axios from 'axios';
+import { useShoppingCart } from '../models/ShoppingCart';
+import { useRouter } from 'next/router';
 
 interface Props {
   products: IProduct[];
 }
 
 const Home: NextPage<Props> = ({ products }) => {
+  const [, updateCart, , getQuantity] = useShoppingCart();
+  const router = useRouter();
+  const onAddToCart = async (product: IProduct) => {
+    const quantity = getQuantity(product) + 1;
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if (data.countInStock < quantity) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    updateCart({ product, quantity });
+    router.push('/cart');
+  };
   return (
     <Layout>
       <div>
@@ -45,7 +60,11 @@ const Home: NextPage<Props> = ({ products }) => {
                   </NextLink>
                   <CardActions>
                     <Typography>${product.price}</Typography>
-                    <Button size="small" color="primary">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => onAddToCart(product)}
+                    >
                       Add to cart
                     </Button>
                   </CardActions>

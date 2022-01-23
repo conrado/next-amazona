@@ -16,19 +16,35 @@ import {
   Typography,
 } from '@mui/material';
 import Layout from '../components/Layout';
-import { useShoppingCart } from '../models/ShoppingCart';
+import { ICartItem, useShoppingCart } from '../models/ShoppingCart';
 import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
+import { IProduct } from '../models/Product';
+import axios from 'axios';
 
 function CartScreen() {
-  const [cart, addToCart] = useShoppingCart();
+  const [cart, updateCart, removeFromCart] = useShoppingCart();
   const { cartItems } = cart;
+  const onUpdateCart = async (item: IProduct, quantity: number) => {
+    const { data } = await axios.get(`/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    updateCart({ product: item, quantity });
+  };
+  const onRemoveItem = (item: ICartItem) => {
+    removeFromCart(item);
+  };
   return (
     <Layout title="Shopping Cart">
       <Typography variant="h1">Shopping Cart</Typography>
       {cartItems.length === 0 ? (
         <div>
-          Cart is empty. <NextLink href="/">Go Shopping</NextLink>
+          Cart is empty.{' '}
+          <NextLink href="/" passHref>
+            <Link>Go Shopping</Link>
+          </NextLink>
         </div>
       ) : (
         <Grid container spacing={1}>
@@ -73,7 +89,15 @@ function CartScreen() {
                         </NextLink>
                       </TableCell>
                       <TableCell align="right">
-                        <Select value={item.quantity}>
+                        <Select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            onUpdateCart(
+                              item.product,
+                              Number.parseInt(e.target.value as string)
+                            )
+                          }
+                        >
                           {Array.from(
                             Array(item.product.countInStock).keys()
                           ).map((x) => (
@@ -85,7 +109,13 @@ function CartScreen() {
                       </TableCell>
                       <TableCell align="right">${item.product.price}</TableCell>
                       <TableCell align="right">
-                        <Button variant="contained" color="secondary">
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => {
+                            onRemoveItem(item);
+                          }}
+                        >
                           x
                         </Button>
                       </TableCell>
