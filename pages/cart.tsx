@@ -16,10 +16,11 @@ import {
   Typography,
 } from '@mui/material';
 import Layout from '../components/Layout';
-import { ICartItem, useShoppingCart } from '../models/ShoppingCart';
+import { useShoppingCart } from '../models/ShoppingCart';
 import NextLink from 'next/link';
+import dynamic from 'next/dynamic';
 
-export default function CartScreen() {
+function CartScreen() {
   const [cart, addToCart] = useShoppingCart();
   const { cartItems } = cart;
   return (
@@ -120,3 +121,8 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+// added dynamic() just because it was added in Basir's course, however
+//  the problem that Basir was trying to fix is not presenting itself in this
+//  code base and could be server-side-rendered indeed.
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
