@@ -21,10 +21,12 @@ import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
 import { IProduct } from '../models/Product';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 function CartScreen() {
   const [cart, updateCart, removeFromCart] = useShoppingCart();
   const { cartItems } = cart;
+  const router = useRouter();
   const onUpdateCart = async (item: IProduct, quantity: number) => {
     const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
@@ -35,6 +37,9 @@ function CartScreen() {
   };
   const onRemoveItem = (item: ICartItem) => {
     removeFromCart(item);
+  };
+  const onCheckout = () => {
+    router.push('/shipping');
   };
   return (
     <Layout title="Shopping Cart">
@@ -139,8 +144,8 @@ function CartScreen() {
                   </Typography>
                 </ListItem>
                 <ListItem>
-                  <Button variant="contained" fullWidth>
-                    Checkout
+                  <Button onClick={onCheckout} variant="contained" fullWidth>
+                    Check Out
                   </Button>
                 </ListItem>
               </List>
