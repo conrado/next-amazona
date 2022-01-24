@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { MouseEvent, ReactNode, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import {
@@ -9,11 +9,16 @@ import {
   Toolbar,
   Typography,
   Badge,
+  Button,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import useStyles from '../utils/styles';
 
 import { useDarkMode } from '../components/DarkMode';
 import { useShoppingCart } from '../models/ShoppingCart';
+import { useUser } from '../models/UserState';
+import { useRouter } from 'next/router';
 
 interface Props {
   title?: string;
@@ -22,11 +27,30 @@ interface Props {
 }
 
 export default function Layout({ title, description, children }: Props) {
+  const router = useRouter();
   const classes = useStyles();
   const [mode, setMode] = useDarkMode();
-  const [cart] = useShoppingCart();
+  const [cart, , , , clearCart] = useShoppingCart();
+  const [user, setUser] = useUser();
   const onDarkModeChange = () => {
     setMode(mode === 'light' ? 'dark' : 'light');
+  };
+
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+
+  const onLoginMenuClick = (evt: MouseEvent) => {
+    setAnchorEl(evt.currentTarget);
+  };
+
+  const onLoginMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const onLogout = () => {
+    setAnchorEl(null);
+    setUser({ userInfo: null, isLoading: false });
+    clearCart();
+    router.push('/');
   };
 
   return (
@@ -59,9 +83,33 @@ export default function Layout({ title, description, children }: Props) {
                 )}
               </Link>
             </NextLink>
-            <NextLink href="/login" passHref>
-              <Link>Login</Link>
-            </NextLink>
+            {user?.userInfo ? (
+              <>
+                <Button
+                  aria-controls="userProfile-menu"
+                  aria-haspopup="true"
+                  onClick={onLoginMenuClick}
+                  className={classes.navbarButton}
+                >
+                  {user.userInfo.name}
+                </Button>
+                <Menu
+                  id="userProfile-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={onLoginMenuClose}
+                >
+                  <MenuItem onClick={onLoginMenuClose}>Profile</MenuItem>
+                  <MenuItem onClick={onLoginMenuClose}>My account</MenuItem>
+                  <MenuItem onClick={onLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <NextLink href="/login" passHref>
+                <Link>Login</Link>
+              </NextLink>
+            )}
           </div>
         </Toolbar>
       </AppBar>

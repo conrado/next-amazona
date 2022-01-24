@@ -9,11 +9,21 @@ import {
 import Layout from '../components/Layout';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
-import { FormEvent } from 'react';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
+import { IUser } from '../models/UserInterface';
+import { useUser } from '../models/UserState';
+import { useRouter } from 'next/router';
 
 export default function Login() {
+  const [user, setUser] = useUser();
+  const router = useRouter();
+  const { redirect } = router.query;
+  const redirectUrl = redirect
+    ? redirect instanceof Array
+      ? redirect[0]
+      : redirect
+    : undefined;
   const classes = useStyles();
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -27,16 +37,21 @@ export default function Login() {
   }) => {
     const { email, password } = formData;
     try {
-      const { data } = await axios.post('/api/users/login', {
+      const { data } = await axios.post<IUser>('/api/users/login', {
         email,
         password,
       });
-      alert('sucessful login');
-      console.log(data);
+      setUser({ userInfo: data, isLoading: false });
+      router.push(redirectUrl || '/');
     } catch (err: any) {
-      alert(err.response.data ? err.response.data.message : err.message);
+      console.error(
+        err.response.data ? err.response.data.message : err.message
+      );
     }
   };
+  if (!user?.isLoading && user?.userInfo) {
+    router.push(redirectUrl || '/');
+  }
   return (
     <Layout title="Login">
       <form onSubmit={handleSubmit(onFormSubmit)} className={classes.form}>

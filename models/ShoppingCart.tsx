@@ -33,6 +33,9 @@ export const useShoppingCart = () => {
     );
     return existingItem ? existingItem.quantity : 0;
   };
+  const clearCart = () => {
+    setLSShoppingCart({ cartItems: [] });
+  };
   const removeFromCart = ({ product }: ICartItem) => {
     const cartItems = LSShoppingCart.cartItems.filter(
       (item) => item.product._id !== product._id
@@ -65,5 +68,6 @@ export const useShoppingCart = () => {
     updateCart,
     removeFromCart,
     getQuantity,
+    clearCart,
   ] as const;
 };

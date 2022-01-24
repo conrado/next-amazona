@@ -8,6 +8,10 @@ const useStyles = makeStyles({
       marginLeft: 10,
     },
   },
+  navbarButton: {
+    color: '#fff',
+    textTransform: 'initial',
+  },
   main: {
     minHeight: '80vh',
   },
