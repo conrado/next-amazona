@@ -8,6 +8,9 @@ const useStyles = makeStyles({
       marginLeft: 10,
     },
   },
+  stepper: {
+    marginTop: '20px',
+  },
   navbarButton: {
     color: '#fff',
     textTransform: 'initial',
