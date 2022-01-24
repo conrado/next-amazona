@@ -14,7 +14,7 @@ const { persistAtom } = recoilPersist();
 
 export const ShippingAddressState = atom({
   key: 'ShippingAddressState',
-  default: { shippingAddress: null },
+  default: { shippingAddress: null, isLoading: true },
   effects_UNSTABLE: [persistAtom],
 });
 
@@ -22,21 +22,27 @@ export const ShippingAddressState = atom({
 export const useShippingAddress = () => {
   const [isInitial, setIsInitial] = React.useState(true);
   // LS for local storage
-  const [LSShippingAddress, setLSShippingAddress] =
-    useRecoilState<{ shippingAddress: IShippingAddress | null }>(
-      ShippingAddressState
-    );
+  const [LSShippingAddress, setLSShippingAddress] = useRecoilState<{
+    shippingAddress: IShippingAddress;
+    isLoading: boolean | null;
+  }>(ShippingAddressState);
 
   const setShippingAddress = (shippingAddress: IShippingAddress) => {
-    setLSShippingAddress({ shippingAddress });
+    setLSShippingAddress({ shippingAddress, isLoading: false });
   };
 
   React.useEffect(() => {
     setIsInitial(false);
+    setLSShippingAddress({
+      shippingAddress: LSShippingAddress.shippingAddress,
+      isLoading: false,
+    });
   }, []);
 
   return [
-    isInitial === true ? { shippingAddress: null } : LSShippingAddress,
+    isInitial === true
+      ? { shippingAddress: null, isLoading: true }
+      : LSShippingAddress,
     setShippingAddress,
   ] as const;
 };

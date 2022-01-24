@@ -11,6 +11,9 @@ const useStyles = makeStyles({
   stepper: {
     marginTop: '20px',
   },
+  grayBg: {
+    backgroundColor: '#ddd',
+  },
   navbarButton: {
     color: '#fff',
     textTransform: 'initial',
