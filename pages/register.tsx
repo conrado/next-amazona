@@ -15,7 +15,7 @@ import { IUser } from '../models/UserInterface';
 import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 
-export default function Login() {
+export default function Register() {
   const [user, setUser] = useUser();
   const router = useRouter();
   const { redirect } = router.query;
@@ -27,19 +27,29 @@ export default function Login() {
   const classes = useStyles();
   const { control, handleSubmit } = useForm({
     defaultValues: {
+      name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
   const onFormSubmit = async (formData: {
+    name: string;
     email: string;
     password: string;
+    confirmPassword: string;
   }) => {
-    const { email, password } = formData;
+    const { name, email, password, confirmPassword } = formData;
+    if (password !== confirmPassword) {
+      alert("passwords don't match");
+      return;
+    }
     try {
-      const { data } = await axios.post<IUser>('/api/users/login', {
+      const { data } = await axios.post<IUser>('/api/users/register', {
+        name,
         email,
         password,
+        confirmPassword,
       });
       setUser({ userInfo: data, isLoading: false });
       router.push(redirectUrl || '/');
@@ -53,10 +63,25 @@ export default function Login() {
     router.push(redirectUrl || '/');
   }
   return (
-    <Layout title="Login">
+    <Layout title="Register">
       <form onSubmit={handleSubmit(onFormSubmit)} className={classes.form}>
         <Typography variant="h1">Login</Typography>
         <List>
+          <ListItem>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  label="Name"
+                  inputProps={{ type: 'text' }}
+                  {...field}
+                ></TextField>
+              )}
+            />
+          </ListItem>
           <ListItem>
             <Controller
               name="email"
@@ -88,17 +113,29 @@ export default function Login() {
             />
           </ListItem>
           <ListItem>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  label="Confirm Password"
+                  inputProps={{ type: 'password' }}
+                  {...field}
+                ></TextField>
+              )}
+            />
+          </ListItem>
+          <ListItem>
             <Button variant="contained" type="submit" fullWidth>
-              Login
+              Register
             </Button>
           </ListItem>
           <ListItem>
-            Don't have an account?&nbsp;
-            <NextLink
-              href={`/register?redirect=${redirectUrl || '/'}`}
-              passHref
-            >
-              <Link>Register</Link>
+            Already have an account?&nbsp;
+            <NextLink href={`/login?redirect=${redirectUrl || '/'}`} passHref>
+              <Link>Login</Link>
             </NextLink>
           </ListItem>
         </List>
