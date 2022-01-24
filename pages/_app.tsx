@@ -5,6 +5,7 @@ import createEmotionCache from '../src/createEmotionCache';
 import { useEffect } from 'react';
 import { RecoilRoot } from 'recoil';
 import { DarkMode } from '../components/DarkMode';
+import { SnackbarProvider } from 'notistack';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -25,14 +26,21 @@ export default function MyApp(props: MyAppProps) {
   }, []);
   return (
     <RecoilRoot>
-      <CacheProvider value={emotionCache}>
-        <Head>
-          <meta name="viewport" content="initial-scale=1, width=device-width" />
-        </Head>
-        <DarkMode>
-          <Component {...pageProps} />
-        </DarkMode>
-      </CacheProvider>
+      <SnackbarProvider
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <meta
+              name="viewport"
+              content="initial-scale=1, width=device-width"
+            />
+          </Head>
+          <DarkMode>
+            <Component {...pageProps} />
+          </DarkMode>
+        </CacheProvider>
+      </SnackbarProvider>
     </RecoilRoot>
   );
 }

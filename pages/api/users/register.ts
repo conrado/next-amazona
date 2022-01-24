@@ -15,16 +15,22 @@ handler.post(async (req, res) => {
     password: bcrypt.hashSync(req.body.password, 10),
     isAdmin: false,
   });
-  const user = await newUser.save();
-  await db.disconnect();
-  const token = signToken(user);
-  res.json({
-    token,
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    isAdmin: user.isAdmin,
-  });
+  try {
+    const user = await newUser.save();
+    await db.disconnect();
+    const token = signToken(user);
+    res.json({
+      token,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } catch {
+    res
+      .status(401)
+      .json({ message: 'An account with that email already exist' });
+  }
 });
 
 export default handler;
