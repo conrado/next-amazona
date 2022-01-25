@@ -5,6 +5,7 @@ export interface IUser extends mongoose.Document {
   email: string;
   password: string;
   isAdmin: boolean;
+  token: string;
 }
 
 export interface IUserInfo {

@@ -1,12 +1,11 @@
 import {
   Button,
   Card,
+  CircularProgress,
   Grid,
   Link,
   List,
   ListItem,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -16,20 +15,23 @@ import {
   Typography,
 } from '@mui/material';
 import Layout from '../components/Layout';
-import { ICartItem, useShoppingCart } from '../models/ShoppingCart';
+import { useShoppingCart } from '../models/ShoppingCart';
 import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
-import { IProduct } from '../models/Product';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useStyles from '../utils/styles';
 import { useShippingAddress } from '../models/ShippingAddress';
 import { usePaymentMethod } from '../models/PaymentMethod';
 import CheckoutWizard from '../components/CheckoutWizard';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
+import { useUser } from '../models/UserState';
 
 function PlaceOrder() {
-  const [cart] = useShoppingCart();
+  const [user] = useUser();
+  const [cart, , , , clearCart] = useShoppingCart();
   const [shippingAddress] = useShippingAddress();
   const [paymentMethod] = usePaymentMethod();
   const { cartItems } = cart;
@@ -43,10 +45,44 @@ function PlaceOrder() {
     if (!paymentMethod.isLoading && !paymentMethod.paymentMethod) {
       router.push('/payment');
     }
+    if (cartItems.length === 0) {
+      router.push('/cart ');
+    }
   }, []);
   const shippingPrice = itemsPrice > 200 ? 0 : 15;
   const taxPrice = round2(itemsPrice * 0.15);
   const totalPrice = round2(itemsPrice + taxPrice + shippingPrice);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+  const onPlaceOrder = async () => {
+    closeSnackbar();
+    try {
+      setLoading(true);
+      const { data } = await axios.post(
+        '/api/orders',
+        {
+          orderItems: cartItems,
+          shippingAddress: shippingAddress.shippingAddress,
+          paymentMethod: paymentMethod.paymentMethod?.paymentMethod,
+          itemsPrice,
+          shippingPrice,
+          taxPrice,
+          totalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${user?.userInfo?.token}`,
+          },
+        }
+      );
+      clearCart();
+      setLoading(false);
+      router.push(`/order/${data._id}`);
+    } catch (err) {
+      setLoading(false);
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  };
   return (
     <Layout title="Place Order">
       <CheckoutWizard activeStep={3} />
@@ -191,10 +227,15 @@ function PlaceOrder() {
                 </Grid>
               </ListItem>
               <ListItem>
-                <Button variant="contained" fullWidth>
+                <Button onClick={onPlaceOrder} variant="contained" fullWidth>
                   Place Order
                 </Button>
               </ListItem>
+              {loading && (
+                <ListItem>
+                  <CircularProgress />
+                </ListItem>
+              )}
             </List>
           </Card>
         </Grid>
