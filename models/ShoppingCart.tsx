@@ -1,6 +1,7 @@
 import React from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
+import { persistAtomEffect } from '../utils/useSSRecoil';
 import { IProduct } from './Product';
 
 export interface ICartItem {
@@ -12,18 +13,14 @@ export interface IShoppingCart {
   cartItems: ICartItem[];
 }
 
-const { persistAtom } = recoilPersist();
-
-export const ShoppingCartState = atom({
+export const ShoppingCartState = atom<IShoppingCart>({
   key: 'ShoppingCartState',
   default: { cartItems: [] },
-  effects_UNSTABLE: [persistAtom],
+  effects_UNSTABLE: [persistAtomEffect],
 });
 
 // taken from https://stackoverflow.com/questions/68110629/nextjs-react-recoil-persist-values-in-local-storage-initial-page-load-in-wrong/70459889#70459889
 export const useShoppingCart = () => {
-  const [isInitial, setIsInitial] = React.useState(true);
-  // LS for local storage
   const [LSShoppingCart, setLSShoppingCart] =
     useRecoilState<IShoppingCart>(ShoppingCartState);
 
@@ -59,12 +56,8 @@ export const useShoppingCart = () => {
     setLSShoppingCart({ cartItems });
   };
 
-  React.useEffect(() => {
-    setIsInitial(false);
-  }, []);
-
   return [
-    isInitial === true ? { cartItems: [] } : LSShoppingCart,
+    LSShoppingCart,
     updateCart,
     removeFromCart,
     getQuantity,

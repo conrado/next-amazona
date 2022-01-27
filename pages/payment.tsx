@@ -12,15 +12,16 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
 import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/Layout';
-import { IPaymentMethod, usePaymentMethod } from '../models/PaymentMethod';
+import { IPaymentMethod, PaymentMethodState } from '../models/PaymentMethod';
 import { useShippingAddress } from '../models/ShippingAddress';
 import useStyles from '../utils/styles';
 
 export default function Payment() {
   const [shippingAddress] = useShippingAddress();
-  const [paymentMethod, setPaymentMethod] = usePaymentMethod();
+  const [paymentMethod, setPaymentMethod] = useRecoilState(PaymentMethodState);
   const router = useRouter();
   const classes = useStyles();
   const {
@@ -29,7 +30,7 @@ export default function Payment() {
     formState: { errors },
   } = useForm<IPaymentMethod>({
     defaultValues: {
-      paymentMethod: paymentMethod?.paymentMethod?.paymentMethod,
+      paymentMethod: paymentMethod.paymentMethod,
     },
   });
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -47,11 +48,7 @@ export default function Payment() {
     return closeSnackbar;
   }, [errors.paymentMethod]);
 
-  if (paymentMethod.isLoading) {
-    return <></>;
-  }
-  if (!shippingAddress) return <></>;
-  if (!shippingAddress.isLoading && !shippingAddress?.shippingAddress) {
+  if (!shippingAddress) {
     router.push('/shipping');
   }
   return (
@@ -69,10 +66,7 @@ export default function Payment() {
                   required: true,
                 }}
                 render={({ field }) => (
-                  <RadioGroup
-                    defaultValue={paymentMethod.paymentMethod?.paymentMethod}
-                    {...field}
-                  >
+                  <RadioGroup {...field}>
                     <FormControlLabel
                       label="Stripe"
                       value="Stripe"

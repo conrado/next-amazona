@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { RecoilRoot } from 'recoil';
 import { DarkMode } from '../components/DarkMode';
 import { SnackbarProvider } from 'notistack';
+import { SSRecoil } from '../utils/useSSRecoil';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -26,21 +27,23 @@ export default function MyApp(props: MyAppProps) {
   }, []);
   return (
     <RecoilRoot>
-      <SnackbarProvider
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <CacheProvider value={emotionCache}>
-          <Head>
-            <meta
-              name="viewport"
-              content="initial-scale=1, width=device-width"
-            />
-          </Head>
-          <DarkMode>
-            <Component {...pageProps} />
-          </DarkMode>
-        </CacheProvider>
-      </SnackbarProvider>
+      <SSRecoil>
+        <SnackbarProvider
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <CacheProvider value={emotionCache}>
+            <Head>
+              <meta
+                name="viewport"
+                content="initial-scale=1, width=device-width"
+              />
+            </Head>
+            <DarkMode>
+              <Component {...pageProps} />
+            </DarkMode>
+          </CacheProvider>
+        </SnackbarProvider>
+      </SSRecoil>
     </RecoilRoot>
   );
 }

@@ -22,18 +22,19 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import useStyles from '../utils/styles';
 import { useShippingAddress } from '../models/ShippingAddress';
-import { usePaymentMethod } from '../models/PaymentMethod';
 import CheckoutWizard from '../components/CheckoutWizard';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { getError } from '../utils/error';
 import { useUser } from '../models/UserState';
+import { PaymentMethodState } from '../models/PaymentMethod';
+import { useRecoilState } from 'recoil';
 
 function PlaceOrder() {
   const [user] = useUser();
   const [cart, , , , clearCart] = useShoppingCart();
   const [shippingAddress] = useShippingAddress();
-  const [paymentMethod] = usePaymentMethod();
+  const [paymentMethod] = useRecoilState(PaymentMethodState);
   const { cartItems } = cart;
   const router = useRouter();
   const classes = useStyles();
@@ -42,11 +43,11 @@ function PlaceOrder() {
     cartItems.reduce((a, c) => a + c.product.price * c.quantity, 0)
   );
   useEffect(() => {
-    if (!paymentMethod.isLoading && !paymentMethod.paymentMethod) {
-      router.push('/payment');
-    }
-    if (cartItems.length === 0) {
+    if (cart && cartItems.length === 0) {
       router.push('/cart ');
+    }
+    if (!paymentMethod.paymentMethod) {
+      router.push('/payment');
     }
   }, []);
   const shippingPrice = itemsPrice > 200 ? 0 : 15;
@@ -62,8 +63,8 @@ function PlaceOrder() {
         '/api/orders',
         {
           orderItems: cartItems,
-          shippingAddress: shippingAddress.shippingAddress,
-          paymentMethod: paymentMethod.paymentMethod?.paymentMethod,
+          shippingAddress,
+          paymentMethod: paymentMethod.paymentMethod,
           itemsPrice,
           shippingPrice,
           taxPrice,
@@ -96,11 +97,9 @@ function PlaceOrder() {
               </ListItem>
               <ListItem>
                 <Typography>
-                  {shippingAddress.shippingAddress?.fullName},{' '}
-                  {shippingAddress.shippingAddress?.address},{' '}
-                  {shippingAddress.shippingAddress?.city},{' '}
-                  {shippingAddress.shippingAddress?.postalCode},{' '}
-                  {shippingAddress.shippingAddress?.country}
+                  {shippingAddress?.fullName}, {shippingAddress?.address},{' '}
+                  {shippingAddress?.city}, {shippingAddress?.postalCode},{' '}
+                  {shippingAddress?.country}
                 </Typography>
               </ListItem>
             </List>
@@ -111,9 +110,7 @@ function PlaceOrder() {
                 <Typography variant="h2">Payment Method</Typography>
               </ListItem>
               <ListItem>
-                <Typography>
-                  {paymentMethod.paymentMethod?.paymentMethod}
-                </Typography>
+                <Typography>{paymentMethod.paymentMethod}</Typography>
               </ListItem>
             </List>
           </Card>
