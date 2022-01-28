@@ -19,7 +19,7 @@ import Layout from '../components/Layout';
 import { ICartItem, useShoppingCart } from '../models/ShoppingCart';
 import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
-import { IProduct } from '../models/Product';
+import { IProduct } from '../models/ProductState';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 

@@ -9,6 +9,7 @@ import {
   useShippingAddress,
 } from '../models/ShippingAddress';
 import CheckoutWizard from '../components/CheckoutWizard';
+import { useEffect } from 'react';
 
 export default function Shipping() {
   const [user] = useUser();
@@ -19,17 +20,26 @@ export default function Shipping() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IShippingAddress>();
+  } = useForm<IShippingAddress>({
+    defaultValues: {
+      fullName: shippingAddress?.fullName || '',
+      address: shippingAddress?.address || '',
+      city: shippingAddress?.city || '',
+      postalCode: shippingAddress?.postalCode || '',
+      country: shippingAddress?.country || '',
+    },
+  });
 
   const onFormSubmit = (formData: IShippingAddress) => {
     const { fullName, address, city, postalCode, country } = formData;
     setShippingAddress({ fullName, address, city, postalCode, country });
     router.push('/payment');
   };
-  if (!user) return <></>;
-  if (!user?.isLoading && !user.userInfo) {
-    router.push('/login?redirect=/shipping');
-  }
+  useEffect(() => {
+    if (!user || (user && !user.authenticated)) {
+      router.push('/login?redirect=/shipping');
+    }
+  }, [user]);
   return (
     <Layout title="Shipping">
       <CheckoutWizard activeStep={1} />

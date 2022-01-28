@@ -1,29 +1,17 @@
 import React from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
+import { persistAtomEffect } from '../utils/useSSRecoil';
 import { IUserInfo } from './UserInterface';
 
-const { persistAtom } = recoilPersist();
-
-export const UserState = atom({
+export const UserState = atom<IUserInfo | null>({
   key: 'UserState',
-  default: { userInfo: null, isLoading: true },
-  effects_UNSTABLE: [persistAtom],
+  default: null,
+  effects_UNSTABLE: [persistAtomEffect],
 });
 
 export const useUser = () => {
-  const [isInitial, setIsInitial] = React.useState(true);
   // LS for local storage
-  const [LSUser, setLSUser] = useRecoilState<IUserInfo>(UserState);
+  const [LSUser, setLSUser] = useRecoilState(UserState);
 
-  const setUser = (user: IUserInfo) => {
-    setLSUser(user);
-  };
-
-  React.useEffect(() => {
-    setIsInitial(false);
-    setLSUser({ userInfo: LSUser.userInfo, isLoading: false });
-  }, []);
-
-  return [isInitial === true ? null : LSUser, setUser] as const;
+  return [LSUser, setLSUser] as const;
 };

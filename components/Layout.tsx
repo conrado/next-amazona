@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactNode, useState } from 'react';
+import { MouseEvent, ReactNode, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import {
@@ -48,7 +48,7 @@ export default function Layout({ title, description, children }: Props) {
 
   const onLogout = () => {
     setAnchorEl(null);
-    setUser({ userInfo: null, isLoading: false });
+    setUser(null);
     clearCart();
     router.push('/');
   };
@@ -83,7 +83,7 @@ export default function Layout({ title, description, children }: Props) {
                 )}
               </Link>
             </NextLink>
-            {user?.userInfo ? (
+            {user?.authenticated ? (
               <>
                 <Button
                   aria-controls="userProfile-menu"
@@ -91,7 +91,7 @@ export default function Layout({ title, description, children }: Props) {
                   onClick={onLoginMenuClick}
                   className={classes.navbarButton}
                 >
-                  {user.userInfo.name}
+                  {user.name}
                 </Button>
                 <Menu
                   id="userProfile-menu"

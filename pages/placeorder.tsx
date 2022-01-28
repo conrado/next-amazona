@@ -56,6 +56,7 @@ function PlaceOrder() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const onPlaceOrder = async () => {
+    console.log(cartItems);
     closeSnackbar();
     try {
       setLoading(true);
@@ -72,7 +73,7 @@ function PlaceOrder() {
         },
         {
           headers: {
-            authorization: `Bearer ${user?.userInfo?.token}`,
+            authorization: `Bearer ${user?.token}`,
           },
         }
       );

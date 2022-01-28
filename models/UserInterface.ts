@@ -1,14 +1,8 @@
-import mongoose from 'mongoose';
-
-export interface IUser extends mongoose.Document {
+export interface IUserInfo {
   name: string;
   email: string;
   password: string;
   isAdmin: boolean;
+  authenticated: boolean;
   token: string;
-}
-
-export interface IUserInfo {
-  userInfo: IUser | null;
-  isLoading: boolean;
 }

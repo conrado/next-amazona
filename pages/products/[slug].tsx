@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 import useStyles from '../../utils/styles';
 import db from '../../utils/db';
-import Product, { IProduct } from '../../models/Product';
+import Product from '../../models/Product';
+import { IProduct } from '../../models/ProductState';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { useShoppingCart } from '../../models/ShoppingCart';

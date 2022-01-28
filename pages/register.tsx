@@ -11,7 +11,7 @@ import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
-import { IUser } from '../models/UserInterface';
+import { IUserInfo } from '../models/UserInterface';
 import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -52,13 +52,13 @@ export default function Register() {
       return;
     }
     try {
-      const { data } = await axios.post<IUser>('/api/users/register', {
+      const { data } = await axios.post<IUserInfo>('/api/users/register', {
         name,
         email,
         password,
         confirmPassword,
       });
-      setUser({ userInfo: data, isLoading: false });
+      setUser(data);
       router.push(redirectUrl || '/');
     } catch (err: any) {
       enqueueSnackbar(
@@ -67,7 +67,7 @@ export default function Register() {
       );
     }
   };
-  if (!user?.isLoading && user?.userInfo) {
+  if (user) {
     router.push(redirectUrl || '/');
   }
   return (

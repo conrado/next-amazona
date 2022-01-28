@@ -2,7 +2,7 @@ import React from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { persistAtomEffect } from '../utils/useSSRecoil';
-import { IProduct } from './Product';
+import { IProduct } from './ProductState';
 
 export interface ICartItem {
   product: IProduct;

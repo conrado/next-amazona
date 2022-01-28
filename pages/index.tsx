@@ -13,7 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import db from '../utils/db';
-import Product, { IProduct } from '../models/Product';
+import Product from '../models/Product';
+import { IProduct } from '../models/ProductState';
 import axios from 'axios';
 import { useShoppingCart } from '../models/ShoppingCart';
 import { useRouter } from 'next/router';

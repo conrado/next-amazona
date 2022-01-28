@@ -11,10 +11,11 @@ import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
-import { IUser } from '../models/UserInterface';
+import { IUserInfo } from '../models/UserInterface';
 import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
 
 export default function Login() {
   const [user, setUser] = useUser();
@@ -46,11 +47,11 @@ export default function Login() {
   }) => {
     closeSnackbar();
     try {
-      const { data } = await axios.post<IUser>('/api/users/login', {
+      const { data } = await axios.post<IUserInfo>('/api/users/login', {
         email,
         password,
       });
-      setUser({ userInfo: data, isLoading: false });
+      setUser(data);
       router.push(redirectUrl || '/');
     } catch (err: any) {
       enqueueSnackbar(
@@ -59,9 +60,11 @@ export default function Login() {
       );
     }
   };
-  if (!user?.isLoading && user?.userInfo) {
-    router.push(redirectUrl || '/');
-  }
+  useEffect(() => {
+    if (user && user?.authenticated) {
+      router.push(redirectUrl || '/');
+    }
+  }, [user]);
   return (
     <Layout title="Login">
       <form onSubmit={handleSubmit(onFormSubmit)} className={classes.form}>

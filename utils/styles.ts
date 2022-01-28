@@ -40,5 +40,8 @@ const useStyles = makeStyles({
     maxWidth: 800,
     margin: '0 auto',
   },
+  error: {
+    color: '#f04040',
+  },
 });
 export default useStyles;
