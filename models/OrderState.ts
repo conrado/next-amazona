@@ -1,9 +1,9 @@
-import { Document } from 'mongoose';
+import { Document, SchemaTimestampsConfig } from 'mongoose';
 import { IPaymentMethod } from './PaymentMethod';
 import { IShippingAddress } from './ShippingAddress';
 import { ICartItem } from './ShoppingCart';
 
-export interface IOrder extends Document {
+export interface IOrder extends Document, SchemaTimestampsConfig {
   user: string;
   orderItems: ICartItem[];
   shippingAddress: IShippingAddress;

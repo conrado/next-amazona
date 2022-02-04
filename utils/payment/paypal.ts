@@ -1,7 +1,8 @@
 import { ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
 
+const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+
 export const PayPalOptions: ReactPayPalScriptOptions = {
-  'client-id':
-    'ATO0pzIh2yKy9RPnOOBazl-84GSFtQxIwfFZvz0T3X4rskXQQzR8VN9txadjruWeEGZ6kr01_gvSTM0c',
+  'client-id': CLIENT_ID || '',
   'data-react-paypal-script-id': '',
 };

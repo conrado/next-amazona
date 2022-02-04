@@ -42,8 +42,11 @@ export default function Layout({ title, description, children }: Props) {
     setAnchorEl(evt.currentTarget);
   };
 
-  const onLoginMenuClose = () => {
+  const onLoginMenuClose = (e: MouseEvent, redirect: string) => {
     setAnchorEl(null);
+    if (redirect) {
+      router.push(redirect);
+    }
   };
 
   const onLogout = () => {
@@ -100,8 +103,20 @@ export default function Layout({ title, description, children }: Props) {
                   open={Boolean(anchorEl)}
                   onClose={onLoginMenuClose}
                 >
-                  <MenuItem onClick={onLoginMenuClose}>Profile</MenuItem>
-                  <MenuItem onClick={onLoginMenuClose}>My account</MenuItem>
+                  <MenuItem
+                    onClick={(e) => {
+                      onLoginMenuClose(e, '/profile');
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={(e) => {
+                      onLoginMenuClose(e, '/order-history');
+                    }}
+                  >
+                    Order History
+                  </MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
               </>
