@@ -19,6 +19,8 @@
     "@mui/icons-material": "latest",
     "@mui/material": "^5.2.7",
     "@mui/styles": "^5.2.3",
+    "@paypal/paypal-js": "^5.0.2",
+    "@paypal/react-paypal-js": "^7.6.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "jsonwebtoken": "^8.5.1",

@@ -7,6 +7,8 @@ import { RecoilRoot } from 'recoil';
 import { DarkMode } from '../components/DarkMode';
 import { SnackbarProvider } from 'notistack';
 import { SSRecoil } from '../utils/useSSRecoil';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { PayPalOptions } from '../utils/payment/paypal';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -32,15 +34,17 @@ export default function MyApp(props: MyAppProps) {
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <CacheProvider value={emotionCache}>
-            <Head>
-              <meta
-                name="viewport"
-                content="initial-scale=1, width=device-width"
-              />
-            </Head>
-            <DarkMode>
-              <Component {...pageProps} />
-            </DarkMode>
+            <PayPalScriptProvider deferLoading={true} options={PayPalOptions}>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="initial-scale=1, width=device-width"
+                />
+              </Head>
+              <DarkMode>
+                <Component {...pageProps} />
+              </DarkMode>
+            </PayPalScriptProvider>
           </CacheProvider>
         </SnackbarProvider>
       </SSRecoil>

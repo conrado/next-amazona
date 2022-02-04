@@ -1,4 +1,3 @@
-import React from 'react';
 import { atom } from 'recoil';
 import { persistAtomEffect } from '../utils/useSSRecoil';
 

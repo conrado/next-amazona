@@ -1,9 +1,8 @@
-import React from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { persistAtomEffect } from '../utils/useSSRecoil';
-import { IUserInfo } from './UserInterface';
+import { IUser } from './UserInterface';
 
-export const UserState = atom<IUserInfo | null>({
+export const UserState = atom<IUser | null>({
   key: 'UserState',
   default: null,
   effects_UNSTABLE: [persistAtomEffect],

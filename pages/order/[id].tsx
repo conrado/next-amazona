@@ -24,6 +24,21 @@ import { useEffect, useState } from 'react';
 import { getError } from '../../utils/error';
 import { useUser } from '../../models/UserState';
 import { IOrder } from '../../models/OrderState';
+import {
+  OnApproveBraintreeActions,
+  PayPalButtons,
+  SCRIPT_LOADING_STATE,
+  usePayPalScriptReducer,
+} from '@paypal/react-paypal-js';
+import {
+  CreateOrderActions,
+  CreateOrderRequestBody,
+  OnApproveActions,
+  OnApproveData,
+  PaymentFailureReason,
+} from '@paypal/paypal-js';
+import { useSnackbar } from 'notistack';
+import { usePaymentPaypal } from '../../models/PaymentPaypal';
 
 interface Props {
   params: {
@@ -33,6 +48,7 @@ interface Props {
 
 function Order({ params }: Props) {
   const orderId = params.id;
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [user] = useUser();
   const [order, setOrder] = useState<IOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,6 +66,8 @@ function Order({ params }: Props) {
   const paidAt = order?.paidAt;
   const router = useRouter();
   const classes = useStyles();
+  const [paymentPaypal, setPaymentPaypal] = usePaymentPaypal();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -63,15 +81,100 @@ function Order({ params }: Props) {
         setError(getError(err));
       }
     };
-    if ((user && !order) || (user && order && order._id !== orderId)) {
+    if (
+      (user && !order) ||
+      paymentPaypal.paymentSuccess ||
+      (user && order && order._id !== orderId)
+    ) {
       fetchOrder();
+      if (paymentPaypal.paymentSuccess) {
+        setPaymentPaypal({
+          paymentLoading: false,
+          paymentSuccess: false,
+          paymentError: null,
+        });
+      }
+    } else if (user?.token) {
+      const loadPaypalScript = async () => {
+        const { data: clientId } = await axios.get('/api/keys/paypal', {
+          headers: {
+            authorization: `Bearer ${user?.token}`,
+          },
+        });
+        paypalDispatch({
+          type: 'resetOptions',
+          value: {
+            'client-id': clientId,
+            currency: 'USD',
+          },
+        });
+        paypalDispatch({
+          type: 'setLoadingStatus',
+          value: SCRIPT_LOADING_STATE.PENDING,
+        });
+      };
+      loadPaypalScript();
     }
-  }, [order, user]);
+  }, [order, user, paymentPaypal]);
   useEffect(() => {
     if (user !== null && !user.authenticated) {
       router.push('/login');
     }
   }, [user]);
+  const createOrder = (_: any, actions: CreateOrderActions) => {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: (totalPrice ? totalPrice : 0).toString() },
+          },
+        ],
+      })
+      .then((orderId) => {
+        return orderId;
+      });
+  };
+  const onApprove = (data: OnApproveData, actions: OnApproveActions) => {
+    const retVal = actions.order?.capture().then(async (details) => {
+      console.log(details);
+      console.log(user?.token);
+      try {
+        setPaymentPaypal({ ...paymentPaypal, paymentLoading: true });
+        const { data } = await axios.put(
+          `/api/orders/${order?._id}/pay`,
+          details,
+          {
+            headers: {
+              authorization: `Bearer ${user?.token}`,
+            },
+          }
+        );
+        setPaymentPaypal({
+          ...paymentPaypal,
+          paymentLoading: false,
+          paymentSuccess: true,
+        });
+        enqueueSnackbar('Order is paid', { variant: 'success' });
+      } catch (err) {
+        setPaymentPaypal({
+          ...paymentPaypal,
+          paymentLoading: false,
+          paymentError: getError(err),
+        });
+        enqueueSnackbar(getError(err), { variant: 'error' });
+      }
+    });
+    // look at this wonderful retVal crap... sometimes typescript is a pain
+    // because vendors are too crap to provide proper types or examples.
+    return retVal
+      ? retVal
+      : new Promise<void>(() => {
+          return;
+        });
+  };
+  const onError = (error: Record<string, unknown>) => {
+    enqueueSnackbar(getError(error), { variant: 'error' });
+  };
   return (
     <Layout title={`Order ${orderId}`}>
       <CheckoutWizard activeStep={4} />
@@ -229,6 +332,21 @@ function Order({ params }: Props) {
                     </Grid>
                   </Grid>
                 </ListItem>
+                {!isPaid && (
+                  <ListItem>
+                    {isPending ? (
+                      <CircularProgress />
+                    ) : (
+                      <div className={classes.fullWidth}>
+                        <PayPalButtons
+                          createOrder={createOrder}
+                          onApprove={onApprove}
+                          onError={onError}
+                        ></PayPalButtons>
+                      </div>
+                    )}
+                  </ListItem>
+                )}
               </List>
             </Card>
           </Grid>

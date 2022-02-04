@@ -11,7 +11,7 @@ import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
-import { IUserInfo } from '../models/UserInterface';
+import { IUser } from '../models/UserInterface';
 import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -47,7 +47,7 @@ export default function Login() {
   }) => {
     closeSnackbar();
     try {
-      const { data } = await axios.post<IUserInfo>('/api/users/login', {
+      const { data } = await axios.post<IUser>('/api/users/login', {
         email,
         password,
       });
