@@ -16,6 +16,7 @@ import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
+import { getError } from '../utils/error';
 
 export default function Login() {
   const [user, setUser] = useUser();
@@ -53,11 +54,8 @@ export default function Login() {
       });
       setUser(data);
       router.push(redirectUrl || '/');
-    } catch (err: any) {
-      enqueueSnackbar(
-        err.response.data ? err.response.data.message : err.message,
-        { variant: 'error' }
-      );
+    } catch (err) {
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
   useEffect(() => {

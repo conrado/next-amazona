@@ -15,6 +15,7 @@ import { IUser } from '../models/UserInterface';
 import { useUser } from '../models/UserState';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
 
 export default function Register() {
   const [user, setUser] = useUser();
@@ -60,11 +61,8 @@ export default function Register() {
       });
       setUser(data);
       router.push(redirectUrl || '/');
-    } catch (err: any) {
-      enqueueSnackbar(
-        err.response.data ? err.response.data.message : err.message,
-        { variant: 'error' }
-      );
+    } catch (err) {
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
   if (user) {
@@ -73,7 +71,7 @@ export default function Register() {
   return (
     <Layout title="Register">
       <form onSubmit={handleSubmit(onFormSubmit)} className={classes.form}>
-        <Typography variant="h1">Login</Typography>
+        <Typography variant="h1">Register</Typography>
         <List>
           <ListItem>
             <Controller
