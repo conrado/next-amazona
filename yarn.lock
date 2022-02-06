@@ -2615,6 +2615,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chart.js@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "chart.js@npm:3.7.0"
+  checksum: 050d675d15742e873ec10aa3c77fecd43d16062a5f188615795a08158b8aed591f98f2f067adf5d3f6b710093ea3a754977b2418fb30ff0babdeabbcf6898e5e
+  languageName: node
+  linkType: hard
+
 "chokidar@npm:3.5.1":
   version: 3.5.1
   resolution: "chokidar@npm:3.5.1"
@@ -6356,6 +6363,7 @@ __metadata:
     axios: ^0.24.0
     babel-jest: ^27.4.6
     bcrypt: ^5.0.1
+    chart.js: ^3.7.0
     eslint: latest
     eslint-config-next: latest
     jest: ^27.4.7
@@ -6366,6 +6374,7 @@ __metadata:
     notistack: ^2.0.3
     puppeteer: ^13.0.1
     react: latest
+    react-chartjs-2: ^4.0.1
     react-dom: latest
     react-hook-form: ^7.25.0
     recoil: ^0.5.2
@@ -7129,6 +7138,16 @@ __metadata:
     iconv-lite: 0.4.24
     unpipe: 1.0.0
   checksum: d5e9179d2f1f0a652cd107c080f25d165c724f546124d620c8df7fb80322df42bff547a8b310e55e1f7952556d013716a21b30162192eb0b3332d7efcba75883
+  languageName: node
+  linkType: hard
+
+"react-chartjs-2@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "react-chartjs-2@npm:4.0.1"
+  peerDependencies:
+    chart.js: ^3.5.0
+    react: ^16.8.0 || ^17.0.0
+  checksum: c22e994c73c0fba8140e9228703b3a94f54a053b00b7a70a53d7056139349f3032daf1512fa38bad23e8e348affc4e36ebbfea8beb5e4c5802bfc8c72d9c68d6
   languageName: node
   linkType: hard
 

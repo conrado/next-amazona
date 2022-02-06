@@ -117,6 +117,13 @@ export default function Layout({ title, description, children }: Props) {
                   >
                     Order History
                   </MenuItem>
+                  {user.isAdmin && (
+                    <MenuItem
+                      onClick={(e) => onLoginMenuClose(e, '/admin/dashboard')}
+                    >
+                      Admin Dashboard
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
               </>
