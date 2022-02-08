@@ -2,15 +2,16 @@ import nc from 'next-connect';
 import Order from '../../../models/Order';
 import Product from '../../../models/Product';
 import User from '../../../models/User';
-import { isAuth, NextApiRequestWithUser } from '../../../utils/auth';
 import db from '../../../utils/db';
 import { onError } from '../../../utils/error';
+import { isAdmin, isAuth, NextApiRequestWithUser } from '../../../utils/auth';
 import { NextApiResponse } from 'next';
 
 const handler = nc<NextApiRequestWithUser, NextApiResponse>({
   onError,
 });
 handler.use(isAuth);
+handler.use(isAdmin);
 
 handler.get(async (req, res) => {
   await db.connect();
@@ -35,6 +36,7 @@ handler.get(async (req, res) => {
       },
     },
   ]);
+  await db.disconnect();
   res.send({ ordersCount, productsCount, usersCount, ordersPrice, salesData });
 });
 

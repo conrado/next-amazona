@@ -47,3 +47,14 @@ export const isAuth: Middleware<
     res.status(401).send({ message: 'Token is not supplied' });
   }
 };
+
+export const isAdmin: Middleware<
+  NextApiRequestWithUser,
+  NextApiResponse
+> = async (req, res, next) => {
+  if (req.user?.isAdmin) {
+    next();
+  } else {
+    res.status(401).send({ message: 'User is not admin' });
+  }
+};
